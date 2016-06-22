@@ -3,34 +3,55 @@
 
 module Curses 
 	module CommandLine
-		extend Scrollable
-		class History < Array
+		class History 
 			attr_accessor :max_size
 			def initialize maxsize
 				@max_size = maxsize
+				@content = []
 			end
 
 			def record msg
-				push msg
-				pop if length > max_size
+				@content.push msg
+				@content.pop if length > max_size
+			end
+
+			def length 
+				@content.length
+			end
+
+			def [] (y)
+				@content[y]
+			end
+
+			def last n = 1
+				@content.last n
 			end
 		end
 
-		attr_accessor :command_history
-		attr_reader :command_history
+		attr_accessor :command_history, :default_message
 
+		def self.extended base
+			base.instance_exec do 
+				@command_history = History.new 1000
+				@default_message = false
+				scrollok true
+				setscrreg(begx, maxx)
+				nl
+				self.crmode
+				self.noecho
+				cursor.visibility = 0
+				focus
+			end
 
-		def initialize 
-			@command_history = History.new
-			@display_history = History.new
 		end
 
 		def prompt message = nil
 			m = message || default_message
 			write m unless m.nil?
-			ret = gets.chomp
-			@cmdhistory.record ret
-			@displayhistory.record message + ret
+			refresh
+			ret = getstr.chomp
+			command_history.record ret
+			ret
 		end
 	end
 end
