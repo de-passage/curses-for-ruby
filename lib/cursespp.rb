@@ -53,6 +53,6 @@ require_relative "window.rb"
 Curses.extend Curses::Extensions
 Curses::Window.prepend Curses::WindowExtensions
 Curses.stdscr.instance_variable_set "@cursor", Curses::Window::Cursor.new(Curses.stdscr)
-Curses.stdscr.instance_variable_set "@mode", Curses::Window::Mode.new( { nl: true, cr: :nocbreak, echo: :true } )
+#Curses.stdscr.instance_variable_set "@mode", Curses::Window::Mode.new( { nl: true, cr: :nocbreak, echo: :true } )
 	
 
